@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:17.6           # PostgreSQL version
+    container_name: postgres-spring-boot
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: /data/postgres
+    ports:
+      - "5332:5432"             # Map container port to host
+    volumes:
+      - db:/data/postgres  # Persist data
+    networks:
+      - db
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:
