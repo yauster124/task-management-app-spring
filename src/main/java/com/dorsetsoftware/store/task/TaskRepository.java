@@ -16,9 +16,9 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Modifying
     @Query("UPDATE Task t SET t.taskIndex = t.taskIndex + 1 " +
-            "WHERE t.status = :status AND t.taskIndex >= :startIndex")
+            "WHERE t.status = :status AND t.taskIndex < :startIndex AND t.taskIndex >= :endIndex")
     void incrementIndicesFrom(@Param("status") Status status,
-            @Param("startIndex") int startIndex);
+            @Param("startIndex") int startIndex, @Param("endIndex") int endIndex);
 
     @Modifying
     @Query("UPDATE Task t SET t.taskIndex = t.taskIndex - 1 " +

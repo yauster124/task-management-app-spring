@@ -68,12 +68,16 @@ public class TaskService {
             Status status = statusRepository.findById(dto.getStatus().getId())
                 .orElseThrow(() -> new RuntimeException("Status not found"));
 
-            if (dto.getStatus().getId() != existingTask.getStatus().getId()) {
-                taskRepository.incrementIndicesFrom(status, dto.getTaskIndex());
-            }
+            // if (dto.getStatus().getId() != existingTask.getStatus().getId()) {
+            //     taskRepository.incrementIndicesFrom(status, existingTask.getTaskIndex(), dto.getTaskIndex());
+            // }
 
             if (dto.getStatus().getId() == existingTask.getStatus().getId()) {
-                taskRepository.decrementIndicesFrom(status, existingTask.getTaskIndex(), dto.getTaskIndex());
+                if (dto.getTaskIndex() > existingTask.getTaskIndex()) {
+                    taskRepository.decrementIndicesFrom(status, existingTask.getTaskIndex(), dto.getTaskIndex());
+                } else {
+                    taskRepository.incrementIndicesFrom(status, existingTask.getTaskIndex(), dto.getTaskIndex());
+                }
             }
 
             existingTask.setTaskIndex(dto.getTaskIndex());
