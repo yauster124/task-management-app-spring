@@ -18,6 +18,7 @@ public class Task {
     private String title;
     private String description;
     private LocalDate doBy;
+    private Integer taskIndex;
 
     @ManyToOne
     @JoinColumn(name = "status_id")
@@ -30,11 +31,21 @@ public class Task {
     public Task() {
     }
 
-    public Task(String title, String description, LocalDate doBy, Status status) {
+    public Task(String title, String description, LocalDate doBy, Status status, User user) {
         this.title = title;
         this.description = description;
         this.doBy = doBy;
         this.status = status;
+        this.user = user;
+    }
+
+    public Task(String title, String description, LocalDate doBy, Integer taskIndex, Status status, User user) {
+        this.title = title;
+        this.description = description;
+        this.doBy = doBy;
+        this.taskIndex = taskIndex;
+        this.status = status;
+        this.user = user;
     }
 
     // Getters and setters
@@ -68,6 +79,14 @@ public class Task {
 
     public void setDoBy(LocalDate doBy) {
         this.doBy = doBy;
+    }
+
+    public Integer getTaskIndex() {
+        return taskIndex;
+    }
+
+    public void setTaskIndex(Integer taskIndex) {
+        this.taskIndex = taskIndex;
     }
 
     public Status getStatus() {

@@ -14,15 +14,18 @@ public class TaskUpdateDto {
     @FutureOrPresent(message = "Do by date must not be in the past")
     private LocalDate doBy;
 
+    private Integer taskIndex;
+
     private StatusDto status;
 
     public TaskUpdateDto() {
     }
 
-    public TaskUpdateDto(String title, String description, LocalDate doBy, StatusDto status) {
+    public TaskUpdateDto(String title, String description, LocalDate doBy, Integer taskIndex, StatusDto status) {
         this.title = title;
         this.description = description;
         this.doBy = doBy;
+        this.taskIndex = taskIndex;
         this.status = status;
     }
 
@@ -49,6 +52,14 @@ public class TaskUpdateDto {
 
     public void setDoBy(LocalDate doBy) {
         this.doBy = doBy;
+    }
+
+    public Integer getTaskIndex() {
+        return taskIndex;
+    }
+
+    public void setTaskIndex(Integer taskIndex) {
+        this.taskIndex = taskIndex;
     }
 
     public StatusDto getStatus() {

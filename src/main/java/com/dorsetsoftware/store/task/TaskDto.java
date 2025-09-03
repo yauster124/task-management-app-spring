@@ -9,16 +9,18 @@ public class TaskDto {
     private String title;
     private String description;
     private LocalDate doBy;
+    private Integer taskIndex;
     private StatusDto status;
 
     public TaskDto() {
     }
 
-    public TaskDto(Integer Id, String title, String description, LocalDate doBy, StatusDto status) {
+    public TaskDto(Integer Id, String title, String description, LocalDate doBy, Integer taskIndex, StatusDto status) {
         this.Id = Id;
         this.title = title;
         this.description = description;
         this.doBy = doBy;
+        this.taskIndex = taskIndex;
         this.status = status;
     }
 
@@ -49,6 +51,14 @@ public class TaskDto {
 
     public void setDoBy(LocalDate doBy) {
         this.doBy = doBy;
+    }
+
+    public Integer getTaskIndex() {
+        return taskIndex;
+    }
+
+    public void setTaskIndex(Integer taskIndex) {
+        this.taskIndex = taskIndex;
     }
 
     public StatusDto getStatus() {
