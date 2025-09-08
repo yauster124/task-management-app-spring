@@ -2,7 +2,9 @@ package com.dorsetsoftware.store.auth;
 
 import com.dorsetsoftware.store.user.*;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,19 +24,23 @@ public class AuthController {
     JwtUtil jwtUtils;
 
     @PostMapping("/signin")
-    public String authenticateUser(@RequestBody User user) {
+    public Map<String, String> authenticateUser(@RequestBody User user) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         user.getUsername(),
                         user.getPassword()));
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return jwtUtils.generateToken(userDetails.getUsername());
+        String token = jwtUtils.generateToken(userDetails.getUsername());
+
+        return Map.of("token", token);
     }
 
     @PostMapping("/signup")
-    public String registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            return "Error: Username is already taken!";
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", "Username is already taken!"));
         }
         // Create new user's account
         User newUser = new User(
@@ -48,6 +54,8 @@ public class AuthController {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        return jwtUtils.generateToken(userDetails.getUsername());
+        String token = jwtUtils.generateToken(userDetails.getUsername());
+
+        return ResponseEntity.ok(Map.of("token", token));
     }
 }

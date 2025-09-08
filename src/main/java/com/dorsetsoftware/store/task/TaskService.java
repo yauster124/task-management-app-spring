@@ -48,10 +48,6 @@ public class TaskService {
 
     @Transactional
     public TaskDto updateTask(Integer id, TaskUpdateDto dto) {
-        System.out.println(dto.getTitle());
-        System.out.println(dto.getDescription());
-        System.out.println(dto.getTaskIndex());
-        System.out.println(dto.getStatus().getTitle());
         Task existingTask = taskRepository.findById(id).orElseThrow();
 
         if (dto.getTitle() != null) {
@@ -68,9 +64,17 @@ public class TaskService {
             Status status = statusRepository.findById(dto.getStatus().getId())
                 .orElseThrow(() -> new RuntimeException("Status not found"));
 
-            // if (dto.getStatus().getId() != existingTask.getStatus().getId()) {
-            //     taskRepository.incrementIndicesFrom(status, existingTask.getTaskIndex(), dto.getTaskIndex());
-            // }
+            if (dto.getStatus().getId() != existingTask.getStatus().getId()) {
+                Integer maxIndex = taskRepository.findMaxTaskIndexByStatus(dto.getStatus().getId());
+                if (maxIndex != null) {
+                    taskRepository.incrementIndicesFrom(status, maxIndex + 1, dto.getTaskIndex());
+                }
+
+                maxIndex = taskRepository.findMaxTaskIndexByStatus(existingTask.getStatus().getId());
+                if (maxIndex != null) {
+                    taskRepository.decrementIndicesFrom(existingTask.getStatus(), existingTask.getTaskIndex(), maxIndex + 1);
+                }
+            }
 
             if (dto.getStatus().getId() == existingTask.getStatus().getId()) {
                 if (dto.getTaskIndex() > existingTask.getTaskIndex()) {
@@ -84,6 +88,7 @@ public class TaskService {
         }
 
         if (dto.getStatus() != null) {
+            System.out.println(dto.getStatus().getId());
             Status status = statusRepository.findById(dto.getStatus().getId())
                 .orElseThrow(() -> new RuntimeException("Status not found"));
             existingTask.setStatus(status);

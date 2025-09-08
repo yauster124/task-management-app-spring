@@ -1,6 +1,8 @@
 package com.dorsetsoftware.store.task;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,7 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,17 +38,17 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDto>> getTasksByStatusAndUser(
-            @RequestParam Integer statusId,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        Status status = statusRepository.findById(statusId)
-                .orElseThrow(() -> new RuntimeException("Status not found"));
-
+    public ResponseEntity<Map<Integer, List<TaskDto>>> getTasksByStatusAndUser(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername());
+        List<Status> statuses = statusRepository.findAll();
 
-        List<TaskDto> tasks = taskService.getTasksByStatusAndUser(status, user);
+        Map<Integer, List<TaskDto>> tasksByStatus = new HashMap<>();
+        for (Status status : statuses) {
+            List<TaskDto> tasks = taskService.getTasksByStatusAndUser(status, user);
+            tasksByStatus.put(status.getId(), tasks);
+        }
 
-        return ResponseEntity.ok(tasks);
+        return ResponseEntity.ok(tasksByStatus);
     }
 
     @PostMapping
@@ -55,7 +57,7 @@ public class TaskController {
         taskService.addNewTask(task, user);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public TaskDto updateTask(
             @PathVariable Integer id,
             @Valid @RequestBody TaskUpdateDto updateDto) {
