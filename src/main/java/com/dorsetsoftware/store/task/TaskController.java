@@ -52,9 +52,9 @@ public class TaskController {
     }
 
     @PostMapping
-    public void addNewTask(@Valid @RequestBody TaskCreateDto task, @AuthenticationPrincipal UserDetails userDetails) {
+    public TaskDto addNewTask(@Valid @RequestBody TaskCreateDto task, @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername());
-        taskService.addNewTask(task, user);
+        return taskService.addNewTask(task, user);
     }
 
     @PatchMapping("/{id}")

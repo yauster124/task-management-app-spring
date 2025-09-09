@@ -30,20 +30,24 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    public void addNewTask(TaskCreateDto task, User user) {
+    public TaskDto addNewTask(TaskCreateDto task, User user) {
         Status status = statusRepository.findById(task.getStatus().getId())
                 .orElseThrow(() -> new RuntimeException("Status not found"));
-        
+
         Integer maxIndex = taskRepository.findMaxTaskIndexByStatus(task.getStatus().getId());
         int nextIndex = (maxIndex == null ? 0 : maxIndex + 1);
 
-        taskRepository.save(new Task(
+        Task newTask = new Task(
                 task.getTitle(),
                 task.getDescription(),
                 task.getDoBy(),
                 nextIndex,
                 status,
-                user));
+                user);
+
+        taskRepository.save(newTask);
+
+        return taskMapper.toDto(newTask);
     }
 
     @Transactional
@@ -62,7 +66,7 @@ public class TaskService {
 
         if (dto.getTaskIndex() != null) {
             Status status = statusRepository.findById(dto.getStatus().getId())
-                .orElseThrow(() -> new RuntimeException("Status not found"));
+                    .orElseThrow(() -> new RuntimeException("Status not found"));
 
             if (dto.getStatus().getId() != existingTask.getStatus().getId()) {
                 Integer maxIndex = taskRepository.findMaxTaskIndexByStatus(dto.getStatus().getId());
@@ -72,7 +76,8 @@ public class TaskService {
 
                 maxIndex = taskRepository.findMaxTaskIndexByStatus(existingTask.getStatus().getId());
                 if (maxIndex != null) {
-                    taskRepository.decrementIndicesFrom(existingTask.getStatus(), existingTask.getTaskIndex(), maxIndex + 1);
+                    taskRepository.decrementIndicesFrom(existingTask.getStatus(), existingTask.getTaskIndex(),
+                            maxIndex + 1);
                 }
             }
 
@@ -88,9 +93,8 @@ public class TaskService {
         }
 
         if (dto.getStatus() != null) {
-            System.out.println(dto.getStatus().getId());
             Status status = statusRepository.findById(dto.getStatus().getId())
-                .orElseThrow(() -> new RuntimeException("Status not found"));
+                    .orElseThrow(() -> new RuntimeException("Status not found"));
             existingTask.setStatus(status);
         }
 
@@ -98,8 +102,16 @@ public class TaskService {
         return taskMapper.toDto(saved);
     }
 
+    @Transactional
     public Boolean deleteTask(Integer id) {
         if (taskRepository.existsById(id)) {
+            Task task = taskRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Task not found"));
+            Integer maxIndex = taskRepository.findMaxTaskIndexByStatus(task.getStatus().getId());
+            if (maxIndex != null) {
+                taskRepository.decrementIndicesFrom(task.getStatus(), task.getTaskIndex(),
+                        maxIndex + 1);
+            }
             taskRepository.deleteById(id);
             return true;
         }
