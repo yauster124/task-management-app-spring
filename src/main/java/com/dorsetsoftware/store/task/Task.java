@@ -2,9 +2,11 @@ package com.dorsetsoftware.store.task;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.List;
 
 import jakarta.persistence.*;
 
+import com.dorsetsoftware.store.category.Category;
 import com.dorsetsoftware.store.status.Status;
 import com.dorsetsoftware.store.user.User;
 
@@ -24,6 +26,10 @@ public class Task {
     @JoinColumn(name = "status_id")
     private Status status;
 
+    @ManyToMany
+    @JoinTable(name = "task_category", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<Category> categories;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -31,7 +37,7 @@ public class Task {
     public Task() {
     }
 
-    public Task(String title, String description, LocalDate doBy, Status status, User user) {
+    public Task(String title, String description, LocalDate doBy, Status status, List<Category> categories, User user) {
         this.title = title;
         this.description = description;
         this.doBy = doBy;
@@ -39,12 +45,13 @@ public class Task {
         this.user = user;
     }
 
-    public Task(String title, String description, LocalDate doBy, Integer taskIndex, Status status, User user) {
+    public Task(String title, String description, LocalDate doBy, Integer taskIndex, Status status, List<Category> categories, User user) {
         this.title = title;
         this.description = description;
         this.doBy = doBy;
         this.taskIndex = taskIndex;
         this.status = status;
+        this.categories = categories;
         this.user = user;
     }
 
@@ -97,11 +104,21 @@ public class Task {
         this.status = status;
     }
 
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
     // equals and hashCode based on id
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Task task = (Task) o;
         return Objects.equals(id, task.id);
     }

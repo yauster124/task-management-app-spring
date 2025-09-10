@@ -1,7 +1,9 @@
 package com.dorsetsoftware.store.task;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import com.dorsetsoftware.store.category.CategoryDto;
 import com.dorsetsoftware.store.status.StatusDto;
 
 public class TaskDto {
@@ -11,17 +13,19 @@ public class TaskDto {
     private LocalDate doBy;
     private Integer taskIndex;
     private StatusDto status;
+    private List<CategoryDto> categories;
 
     public TaskDto() {
     }
 
-    public TaskDto(Integer Id, String title, String description, LocalDate doBy, Integer taskIndex, StatusDto status) {
+    public TaskDto(Integer Id, String title, String description, LocalDate doBy, Integer taskIndex, StatusDto status, List<CategoryDto> categories) {
         this.Id = Id;
         this.title = title;
         this.description = description;
         this.doBy = doBy;
         this.taskIndex = taskIndex;
         this.status = status;
+        this.categories = categories;
     }
 
     // Getters and setters
@@ -67,5 +71,13 @@ public class TaskDto {
 
     public void setStatus(StatusDto status) {
         this.status = status;
+    }
+
+    public List<CategoryDto> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<CategoryDto> categories) {
+        this.categories = categories;
     }
 }

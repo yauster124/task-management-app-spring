@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Task> findByStatusAndUserOrderByTaskIndexAsc(Status status, User user);
 
+    List<Task> findByCategories_TitleAndUser(String categoryTitle, User user);
+
     @Query("SELECT MAX(t.taskIndex) FROM Task t WHERE t.status.id = :statusId")
     Integer findMaxTaskIndexByStatus(@Param("statusId") Integer statusId);
 

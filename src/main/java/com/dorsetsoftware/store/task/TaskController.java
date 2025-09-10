@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.dorsetsoftware.store.category.AssignCategoryRequest;
+import com.dorsetsoftware.store.category.ReplaceCategoryRequest;
+import com.dorsetsoftware.store.category.UnassignCategoryRequest;
 import com.dorsetsoftware.store.status.Status;
 import com.dorsetsoftware.store.status.StatusRepository;
 import com.dorsetsoftware.store.user.User;
@@ -67,5 +70,22 @@ public class TaskController {
     @DeleteMapping("/{id}")
     public Boolean deleteTask(@PathVariable Integer id) {
         return taskService.deleteTask(id);
+    }
+
+    @PostMapping("/{id}/categories")
+    public TaskDto assignCategory(@PathVariable Integer id, @RequestBody AssignCategoryRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername());
+        return taskService.assignCategory(id, request, user);
+    }
+    
+    @PatchMapping("/{id}/categories")
+    public TaskDto replaceCategory(@PathVariable Integer id, @RequestBody ReplaceCategoryRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername());
+        return taskService.replaceCategory(id, request, user);
+    }
+
+    @DeleteMapping("/{taskId}/categories/{categoryId}")
+    public Boolean unassignCategory(@PathVariable Integer taskId, @PathVariable Integer categoryId) {
+        return taskService.unassignCategory(taskId, categoryId);
     }
 }

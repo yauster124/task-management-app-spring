@@ -1,24 +1,38 @@
 package com.dorsetsoftware.store.task;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
 import jakarta.transaction.Transactional;
 
+import com.dorsetsoftware.store.category.AssignCategoryRequest;
+import com.dorsetsoftware.store.category.CategoryCreateDto;
+import com.dorsetsoftware.store.category.CategoryDto;
+import com.dorsetsoftware.store.category.CategoryRepository;
+import com.dorsetsoftware.store.category.ReplaceCategoryRequest;
+import com.dorsetsoftware.store.category.Category;
 import com.dorsetsoftware.store.status.*;
 import com.dorsetsoftware.store.user.User;
 
 @Service
 public class TaskService {
+
+    private final CategoryRepository categoryRepository;
     private final TaskRepository taskRepository;
     private final StatusRepository statusRepository;
     private final TaskMapper taskMapper;
     private final StatusMapper statusMapper;
 
-    public TaskService(TaskRepository taskRepository, StatusRepository statusRepository) {
+    public TaskService(TaskRepository taskRepository, StatusRepository statusRepository,
+            CategoryRepository categoryRepository) {
         this.taskRepository = taskRepository;
         this.statusRepository = statusRepository;
+        this.categoryRepository = categoryRepository;
         this.taskMapper = new TaskMapper();
         this.statusMapper = new StatusMapper();
     }
@@ -43,6 +57,7 @@ public class TaskService {
                 task.getDoBy(),
                 nextIndex,
                 status,
+                new ArrayList<>(),
                 user);
 
         taskRepository.save(newTask);
@@ -100,6 +115,60 @@ public class TaskService {
 
         Task saved = taskRepository.save(existingTask);
         return taskMapper.toDto(saved);
+    }
+
+    @Transactional
+    public TaskDto assignCategory(Integer taskId, AssignCategoryRequest request, User user) {
+        Category category;
+        if (request.getId() != null) {
+            category = categoryRepository.findById(request.getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+        } else {
+            category = new Category(request.getTitle(), user);
+            categoryRepository.save(category);
+        }
+
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
+        task.getCategories().add(category);
+
+        Task saved = taskRepository.save(task);
+        return taskMapper.toDto(saved);
+    }
+
+    @Transactional
+    public TaskDto replaceCategory(Integer taskId, ReplaceCategoryRequest request, User user) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        Category oldCategory = categoryRepository.findById(request.getOldId())
+                .orElseThrow(() -> new RuntimeException("Old category not found"));
+        task.getCategories().remove(oldCategory);
+
+        Category newCategory;
+        if (request.getNewId() != null) {
+            newCategory = categoryRepository.findById(request.getNewId())
+                    .orElseThrow(() -> new RuntimeException("New category not found"));
+        } else {
+            newCategory = new Category();
+            newCategory.setTitle(request.getTitle());
+            categoryRepository.save(newCategory);
+        }
+
+        task.getCategories().add(newCategory);
+        Task saved = taskRepository.save(task);
+
+        return taskMapper.toDto(saved);
+    }
+
+    @Transactional
+    public Boolean unassignCategory(Integer taskId, Integer categoryId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Old category not found"));
+        task.getCategories().remove(category);
+        taskRepository.save(task);
+
+        return true;
     }
 
     @Transactional

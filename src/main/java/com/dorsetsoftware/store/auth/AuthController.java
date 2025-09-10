@@ -79,4 +79,15 @@ public class AuthController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("refreshToken", "");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return ResponseEntity.ok(Map.of("message", "Logged out"));
+    }
 }
