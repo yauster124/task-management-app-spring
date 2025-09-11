@@ -5,14 +5,10 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.transaction.Transactional;
 
 import com.dorsetsoftware.store.category.AssignCategoryRequest;
-import com.dorsetsoftware.store.category.CategoryCreateDto;
-import com.dorsetsoftware.store.category.CategoryDto;
 import com.dorsetsoftware.store.category.CategoryRepository;
 import com.dorsetsoftware.store.category.ReplaceCategoryRequest;
 import com.dorsetsoftware.store.category.Category;
@@ -26,7 +22,6 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final StatusRepository statusRepository;
     private final TaskMapper taskMapper;
-    private final StatusMapper statusMapper;
 
     public TaskService(TaskRepository taskRepository, StatusRepository statusRepository,
             CategoryRepository categoryRepository) {
@@ -34,7 +29,6 @@ public class TaskService {
         this.statusRepository = statusRepository;
         this.categoryRepository = categoryRepository;
         this.taskMapper = new TaskMapper();
-        this.statusMapper = new StatusMapper();
     }
 
     public List<TaskDto> getAllTasks() {
@@ -57,6 +51,7 @@ public class TaskService {
                 task.getDoBy(),
                 nextIndex,
                 status,
+                new ArrayList<>(),
                 new ArrayList<>(),
                 user);
 

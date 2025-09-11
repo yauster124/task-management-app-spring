@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.dorsetsoftware.store.category.CategoryDto;
+import com.dorsetsoftware.store.comment.CommentDto;
 import com.dorsetsoftware.store.status.StatusDto;
 
 public class TaskDto {
@@ -14,11 +15,20 @@ public class TaskDto {
     private Integer taskIndex;
     private StatusDto status;
     private List<CategoryDto> categories;
+    private List<CommentDto> comments;
 
     public TaskDto() {
     }
 
-    public TaskDto(Integer Id, String title, String description, LocalDate doBy, Integer taskIndex, StatusDto status, List<CategoryDto> categories) {
+    public TaskDto(
+        Integer Id,
+        String title,
+        String description,
+        LocalDate doBy,
+        Integer taskIndex,
+        StatusDto status,
+        List<CategoryDto> categories,
+        List<CommentDto> comments) {
         this.Id = Id;
         this.title = title;
         this.description = description;
@@ -26,6 +36,7 @@ public class TaskDto {
         this.taskIndex = taskIndex;
         this.status = status;
         this.categories = categories;
+        this.comments = comments;
     }
 
     // Getters and setters
@@ -79,5 +90,13 @@ public class TaskDto {
 
     public void setCategories(List<CategoryDto> categories) {
         this.categories = categories;
+    }
+
+    public List<CommentDto> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDto> comments) {
+        this.comments = comments;
     }
 }

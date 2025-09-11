@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.persistence.*;
 
 import com.dorsetsoftware.store.category.Category;
+import com.dorsetsoftware.store.comment.Comment;
 import com.dorsetsoftware.store.status.Status;
 import com.dorsetsoftware.store.user.User;
 
@@ -30,6 +31,9 @@ public class Task {
     @JoinTable(name = "task_category", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
 
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -37,21 +41,24 @@ public class Task {
     public Task() {
     }
 
-    public Task(String title, String description, LocalDate doBy, Status status, List<Category> categories, User user) {
+    public Task(String title, String description, LocalDate doBy, Status status, List<Category> categories, List<Comment> comments, User user) {
         this.title = title;
         this.description = description;
         this.doBy = doBy;
         this.status = status;
+        this.categories = categories;
+        this.comments = comments;
         this.user = user;
     }
 
-    public Task(String title, String description, LocalDate doBy, Integer taskIndex, Status status, List<Category> categories, User user) {
+    public Task(String title, String description, LocalDate doBy, Integer taskIndex, Status status, List<Category> categories, List<Comment> comments, User user) {
         this.title = title;
         this.description = description;
         this.doBy = doBy;
         this.taskIndex = taskIndex;
         this.status = status;
         this.categories = categories;
+        this.comments = comments;
         this.user = user;
     }
 
@@ -110,6 +117,14 @@ public class Task {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     // equals and hashCode based on id

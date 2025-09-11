@@ -1,6 +1,7 @@
 package com.dorsetsoftware.store.task;
 
 import com.dorsetsoftware.store.category.CategoryMapper;
+import com.dorsetsoftware.store.comment.CommentMapper;
 import com.dorsetsoftware.store.status.StatusMapper;
 import com.dorsetsoftware.store.user.User;
 
@@ -10,10 +11,12 @@ import java.util.stream.Collectors;
 public class TaskMapper {
     private final StatusMapper statusMapper;
     private final CategoryMapper categoryMapper;
+    private final CommentMapper commentMapper;
 
     public TaskMapper() {
         this.statusMapper = new StatusMapper();
         this.categoryMapper = new CategoryMapper();
+        this.commentMapper = new CommentMapper();
     }
 
     public TaskDto toDto(Task task) {
@@ -30,6 +33,10 @@ public class TaskMapper {
                 task.getCategories()
                     .stream()
                     .map(categoryMapper::toDto)
+                    .collect(Collectors.toList()),
+                task.getComments()
+                    .stream()
+                    .map(commentMapper::toDto)
                     .collect(Collectors.toList())
         );
     }
@@ -43,6 +50,7 @@ public class TaskMapper {
                 dto.getDescription(),
                 dto.getDoBy(),
                 statusMapper.toEntity(dto.getStatus()),
+                new ArrayList<>(),
                 new ArrayList<>(),
                 user);
     }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dorsetsoftware.store.category.AssignCategoryRequest;
 import com.dorsetsoftware.store.category.ReplaceCategoryRequest;
-import com.dorsetsoftware.store.category.UnassignCategoryRequest;
 import com.dorsetsoftware.store.status.Status;
 import com.dorsetsoftware.store.status.StatusRepository;
 import com.dorsetsoftware.store.user.User;
