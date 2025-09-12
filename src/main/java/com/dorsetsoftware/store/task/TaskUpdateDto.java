@@ -2,8 +2,6 @@ package com.dorsetsoftware.store.task;
 
 import java.time.LocalDate;
 
-import jakarta.validation.constraints.*;
-
 import com.dorsetsoftware.store.status.StatusDto;
 
 public class TaskUpdateDto {
@@ -11,7 +9,6 @@ public class TaskUpdateDto {
 
     private String description;
 
-    @FutureOrPresent(message = "Do by date must not be in the past")
     private LocalDate doBy;
 
     private Integer taskIndex;

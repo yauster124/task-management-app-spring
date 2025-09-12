@@ -11,7 +11,6 @@ public class TaskCreateDto {
 
     private String description;
 
-    @FutureOrPresent(message = "Do by date must not be in the past")
     private LocalDate doBy;
 
     @NotNull(message = "Status is required")

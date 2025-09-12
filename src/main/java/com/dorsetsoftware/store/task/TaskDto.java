@@ -6,6 +6,7 @@ import java.util.List;
 import com.dorsetsoftware.store.category.CategoryDto;
 import com.dorsetsoftware.store.comment.CommentDto;
 import com.dorsetsoftware.store.status.StatusDto;
+import com.dorsetsoftware.store.user.UserDto;
 
 public class TaskDto {
     private Integer Id;
@@ -14,6 +15,7 @@ public class TaskDto {
     private LocalDate doBy;
     private Integer taskIndex;
     private StatusDto status;
+    private UserDto user;
     private List<CategoryDto> categories;
     private List<CommentDto> comments;
 
@@ -27,6 +29,7 @@ public class TaskDto {
         LocalDate doBy,
         Integer taskIndex,
         StatusDto status,
+        UserDto user,
         List<CategoryDto> categories,
         List<CommentDto> comments) {
         this.Id = Id;
@@ -35,6 +38,7 @@ public class TaskDto {
         this.doBy = doBy;
         this.taskIndex = taskIndex;
         this.status = status;
+        this.user = user;
         this.categories = categories;
         this.comments = comments;
     }
@@ -82,6 +86,10 @@ public class TaskDto {
 
     public void setStatus(StatusDto status) {
         this.status = status;
+    }
+
+    public UserDto getUser() {
+        return user;
     }
 
     public List<CategoryDto> getCategories() {

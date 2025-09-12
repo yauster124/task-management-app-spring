@@ -127,6 +127,10 @@ public class Task {
         this.comments = comments;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     // equals and hashCode based on id
     @Override
     public boolean equals(Object o) {
